@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#101512">
     <meta
       name="description"
-      content="KiwiCam es un prototipo experimental con Arduino para probar el control orientable de una futura cámara de seguridad. Registra telemetría en SQLite3; aún no captura imágenes ni video."
+      content="KiwiCam es un prototipo experimental con Arduino para probar el control orientable de una futura cámara de seguridad. Registra telemetría en una base de datos local gestionada por SQLite3; aún no captura imágenes ni video."
     >
     <title>KiwiCam — Prototipo experimental Arduino</title>
     <link rel="stylesheet" href="styles.css">
@@ -53,7 +53,7 @@
           <h1>La base de una<br><span>futura cámara.</span></h1>
           <p class="hero-description">
             KiwiCam prueba el control orientable de una futura cámara de seguridad con
-            Arduino, joystick y sensor de luz; sus datos de operación se registran en SQLite3.
+            Arduino, joystick y sensor de luz; sus datos de operación se guardan en una base de datos local gestionada por SQLite3.
           </p>
           <p class="prototype-note">
             En esta etapa no incluye un módulo de cámara ni graba video; esas funciones se
@@ -62,7 +62,7 @@
           <div class="hero-highlights" aria-label="Características principales">
             <div><strong>2 modos</strong><span>Pruebas de control</span></div>
             <div><strong>0–180°</strong><span>Rango del servo</span></div>
-            <div><strong>SQLite3</strong><span>Base de datos local</span></div>
+            <div><strong>SQLite3</strong><span>Motor de base de datos</span></div>
           </div>
         </div>
 
@@ -201,8 +201,9 @@
           <p class="eyebrow">TELEMETRÍA DEL PROTOTIPO · SQLITE3</p>
           <h2>Datos de prueba, no grabaciones.</h2>
           <p>
-            Python añade a <code>kiwicam.db</code> cada lectura enviada por Arduino.
-            La base SQLite3 guarda luz, modo y ángulo del servo; no almacena imágenes ni video.
+            Python registra en <code>kiwicam.db</code> cada lectura recibida desde Arduino.
+            Ese archivo es la base de datos local, gestionada por SQLite3; almacena los valores
+            de luz, el modo y el ángulo del servo, pero no imágenes ni video.
           </p>
           <ul class="data-fields">
             <li><code>timestamp</code><span>Fecha y hora de lectura</span></li>
@@ -274,7 +275,7 @@
         <div class="section-heading">
           <p class="eyebrow">FICHA DEL PROTOTIPO</p>
           <h2>Del sensor al registro.</h2>
-          <p>Arduino controla el montaje y Python registra sus lecturas en SQLite3; esta versión no captura imágenes.</p>
+          <p>Arduino controla el montaje y Python usa SQLite3 para registrar sus lecturas en <code>kiwicam.db</code>; esta versión no captura imágenes.</p>
         </div>
 
         <div class="flow" aria-label="Flujo de telemetría del prototipo: LDR, Arduino, puerto serie, Python y SQLite3">
