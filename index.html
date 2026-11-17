@@ -599,6 +599,11 @@ finally:
           imageViewer.close();
         });
 
+        imageViewer.addEventListener("cancel", (event) => {
+          event.preventDefault();
+          imageViewer.close();
+        });
+
         imageViewer.addEventListener("click", (event) => {
           if (event.target === imageViewer) {
             imageViewer.close();
