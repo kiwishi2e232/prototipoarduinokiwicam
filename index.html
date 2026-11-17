@@ -10,11 +10,29 @@
     >
     <title>KiwiCam — Prototipo experimental Arduino</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+      (() => {
+        const isNativeApp =
+          typeof window.Capacitor !== "undefined" ||
+          (window.location.hostname === "localhost" &&
+            window.location.protocol === "https:");
+
+        document.documentElement.classList.add(
+          isNativeApp ? "native-app" : "web-app",
+        );
+      })();
+    </script>
   </head>
   <body class="is-starting">
     <div class="startup-screen" id="startup-screen" role="status" aria-label="KiwiCam se está inicializando">
-      <img src="assets/kiwicam-inicializando.png" alt="" fetchpriority="high">
+      <img data-native-src="assets/kiwicam-inicializando.png" alt="" fetchpriority="high">
     </div>
+    <script>
+      if (document.documentElement.classList.contains("native-app")) {
+        const startupImage = document.querySelector("#startup-screen img");
+        startupImage.src = startupImage.dataset.nativeSrc;
+      }
+    </script>
     <header class="site-header">
       <a class="brand" href="#inicio" aria-label="KiwiCam, ir al inicio">
         <span class="brand-mark" aria-hidden="true">K</span>
@@ -203,7 +221,7 @@
         </div>
         <div class="database-visuals">
           <figure class="database-figure">
-            <a href="assets/prueba-sqlite3.png" target="_blank" rel="noopener">
+            <a class="image-zoom" href="assets/prueba-sqlite3.png">
               <img
                 class="database-image"
                 src="assets/prueba-sqlite3.png"
@@ -217,7 +235,7 @@
             <summary>Más imágenes de las pruebas</summary>
             <div class="database-gallery-grid">
               <figure class="database-gallery-item">
-                <a href="assets/registros-iniciales-y-recientes.png" target="_blank" rel="noopener">
+                <a class="image-zoom" href="assets/registros-iniciales-y-recientes.png">
                   <img
                     class="database-gallery-image"
                     src="assets/registros-iniciales-y-recientes.png"
@@ -229,7 +247,7 @@
                 <figcaption class="database-caption">REGISTROS INICIALES Y RECIENTES · SQLITE3</figcaption>
               </figure>
               <figure class="database-gallery-item">
-                <a href="assets/arduino-monitor-serie.png" target="_blank" rel="noopener">
+                <a class="image-zoom" href="assets/arduino-monitor-serie.png">
                   <img
                     class="database-gallery-image"
                     src="assets/arduino-monitor-serie.png"
@@ -503,6 +521,13 @@ finally:
 
     </main>
 
+    <dialog class="image-viewer" id="image-viewer" aria-labelledby="image-viewer-back">
+      <button class="image-viewer-back" id="image-viewer-back" type="button">
+        ← Volver a la información
+      </button>
+      <img class="image-viewer-image" id="image-viewer-image" alt="">
+    </dialog>
+
     <footer class="site-footer">
       <a class="brand footer-brand" href="#inicio">
         <span class="brand-mark" aria-hidden="true">K</span>
@@ -514,32 +539,79 @@ finally:
     <script>
       (() => {
         const startupScreen = document.getElementById("startup-screen");
-        const startedAt = performance.now();
-        const minimumDuration = 1400;
+        const isNativeApp =
+          document.documentElement.classList.contains("native-app");
 
-        const revealApp = async () => {
-          if (document.fonts && document.fonts.ready) {
-            await document.fonts.ready;
-          }
-
-          const remaining = minimumDuration - (performance.now() - startedAt);
-          if (remaining > 0) {
-            await new Promise((resolve) => window.setTimeout(resolve, remaining));
-          }
-
-          startupScreen.classList.add("is-leaving");
-          startupScreen.setAttribute("aria-hidden", "true");
-          window.setTimeout(() => {
-            startupScreen.remove();
-            document.body.classList.remove("is-starting");
-          }, 500);
-        };
-
-        if (document.readyState === "complete") {
-          revealApp();
+        if (!isNativeApp) {
+          startupScreen.remove();
+          document.body.classList.remove("is-starting");
         } else {
-          window.addEventListener("load", revealApp, { once: true });
+          const startedAt = performance.now();
+          const minimumDuration = 1400;
+
+          const revealApp = async () => {
+            if (document.fonts && document.fonts.ready) {
+              await document.fonts.ready;
+            }
+
+            const remaining = minimumDuration - (performance.now() - startedAt);
+            if (remaining > 0) {
+              await new Promise((resolve) => window.setTimeout(resolve, remaining));
+            }
+
+            startupScreen.classList.add("is-leaving");
+            startupScreen.setAttribute("aria-hidden", "true");
+            window.setTimeout(() => {
+              startupScreen.remove();
+              document.body.classList.remove("is-starting");
+            }, 500);
+          };
+
+          if (document.readyState === "complete") {
+            revealApp();
+          } else {
+            window.addEventListener("load", revealApp, { once: true });
+          }
         }
+
+        const imageViewer = document.getElementById("image-viewer");
+        const imageViewerImage = document.getElementById("image-viewer-image");
+        const imageViewerBack = document.getElementById("image-viewer-back");
+        let lastImageTrigger = null;
+
+        document.querySelectorAll(".image-zoom").forEach((link) => {
+          const image = link.querySelector("img");
+          if (!image) {
+            return;
+          }
+
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            lastImageTrigger = link;
+            imageViewerImage.src = image.currentSrc || image.src;
+            imageViewerImage.alt = image.alt;
+            imageViewer.showModal();
+            imageViewerBack.focus();
+          });
+        });
+
+        imageViewerBack.addEventListener("click", () => {
+          imageViewer.close();
+        });
+
+        imageViewer.addEventListener("click", (event) => {
+          if (event.target === imageViewer) {
+            imageViewer.close();
+          }
+        });
+
+        imageViewer.addEventListener("close", () => {
+          imageViewerImage.removeAttribute("src");
+          if (lastImageTrigger && lastImageTrigger.isConnected) {
+            lastImageTrigger.focus();
+          }
+          lastImageTrigger = null;
+        });
       })();
     </script>
   </body>
