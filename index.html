@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101512">
+    <meta
+      name="description"
+      content="KiwiCam es un prototipo experimental con Arduino para probar el control orientable de una futura cámara de seguridad. Registra telemetría en SQLite3; aún no captura imágenes ni video."
+    >
+    <title>KiwiCam — Prototipo experimental Arduino</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="is-starting">
+    <div class="startup-screen" id="startup-screen" role="status" aria-label="KiwiCam se está inicializando">
+      <img src="assets/kiwicam-inicializando.png" alt="" fetchpriority="high">
+    </div>
+    <header class="site-header">
+      <a class="brand" href="#inicio" aria-label="KiwiCam, ir al inicio">
+        <span class="brand-mark" aria-hidden="true">K</span>
+        <span>KIWICAM<span class="brand-subtitle">PROTOTIPO · ARDUINO</span></span>
+      </a>
+      <nav class="site-nav" aria-label="Navegación principal">
+        <a href="#modos">Funciones</a>
+        <a href="#componentes">Tecnología</a>
+        <a href="#sqlite">Base de datos</a>
+      </nav>
+      <a class="header-link" href="#videos">Ver video explicativo <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main>
+      <section class="hero" id="inicio">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-dot"></span> PROTOTIPO EXPERIMENTAL · KIWICAM</p>
+          <h1>La base de una<br><span>futura cámara.</span></h1>
+          <p class="hero-description">
+            KiwiCam prueba el control orientable de una futura cámara de seguridad con
+            Arduino, joystick y sensor de luz; sus datos de operación se registran en SQLite3.
+          </p>
+          <p class="prototype-note">
+            En esta etapa no incluye un módulo de cámara ni graba video; esas funciones se
+            plantean para el desarrollo final.
+          </p>
+          <div class="hero-highlights" aria-label="Características principales">
+            <div><strong>2 modos</strong><span>Pruebas de control</span></div>
+            <div><strong>0–180°</strong><span>Rango del servo</span></div>
+            <div><strong>SQLite3</strong><span>Base de datos local</span></div>
+          </div>
+        </div>
+
+        <div class="camera-scene" role="img" aria-label="Ilustración conceptual de una futura cámara de seguridad orientable">
+          <div class="scene-label"><span class="live-dot"></span> VISIÓN DEL PROYECTO</div>
+          <div class="camera">
+            <div class="camera-body">
+              <span class="camera-detail"></span>
+              <span class="camera-lens"><span></span></span>
+              <span class="camera-led"></span>
+            </div>
+            <div class="camera-neck"></div>
+            <div class="camera-base"></div>
+          </div>
+          <div class="scene-grid" aria-hidden="true"></div>
+          <span class="scene-coordinate">CÁMARA DE SEGURIDAD · ETAPA FUTURA</span>
+        </div>
+      </section>
+
+      <section class="modes section-wrap" id="modos">
+        <div class="section-heading">
+          <p class="eyebrow">COMPORTAMIENTO DEL PROTOTIPO</p>
+          <h2>Pruebas de operación para una cámara futura.</h2>
+          <p>El LDR conmuta el comportamiento y los LEDs señalan el estado; este montaje aún no genera imágenes.</p>
+        </div>
+
+        <div class="mode-grid">
+          <article class="mode-card day-card">
+            <img
+              class="mode-image"
+              src="assets/modo-dia.png"
+              alt="Prototipo KiwiCam en prueba diurna, con el LED verde encendido"
+              loading="lazy"
+              decoding="async"
+            >
+            <div class="mode-card-content">
+              <div class="mode-topline">
+                <span class="mode-icon" aria-hidden="true">☼</span>
+                <span class="status-pill"><span></span> LED VERDE</span>
+              </div>
+              <p class="mode-kicker">PRUEBA · MANDO MANUAL</p>
+              <h3>Modo día</h3>
+              <p>El joystick controla el soporte orientable previsto para la cámara.</p>
+            </div>
+          </article>
+
+          <article class="mode-card night-card">
+            <img
+              class="mode-image"
+              src="assets/modo-noche.png"
+              alt="Prototipo KiwiCam en prueba nocturna, con el LED rojo encendido"
+              loading="lazy"
+              decoding="async"
+            >
+            <div class="mode-card-content">
+              <div class="mode-topline">
+                <span class="mode-icon" aria-hidden="true">☾</span>
+                <span class="status-pill"><span></span> LED ROJO</span>
+              </div>
+              <p class="mode-kicker">PRUEBA · BARRIDO AUTOMÁTICO</p>
+              <h3>Modo noche</h3>
+              <p>Con poca luz, el servo recorre los extremos para evaluar el movimiento automático.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="how-it-works section-wrap" id="funcionamiento">
+        <div class="how-copy">
+          <p class="eyebrow">ALCANCE ACTUAL Y PROYECCIÓN</p>
+          <h2>Una base para el proyecto final.</h2>
+          <p>
+            Esta fase valida la lectura de luz, el control del servo y el registro de telemetría.
+            Para llegar a una cámara de seguridad funcional, una etapa posterior deberá
+            incorporar un módulo de cámara y funciones de captura, aún no implementadas.
+          </p>
+        </div>
+        <div class="status-panel">
+          <div class="panel-heading"><span>ESTADO DEL PROTOTIPO</span><span>TEST-01</span></div>
+          <div class="status-row">
+            <span class="status-light green"></span>
+            <span><strong>Día</strong><small>Funcionamiento manual</small></span>
+            <span class="status-label">VERDE</span>
+          </div>
+          <div class="status-row">
+            <span class="status-light red"></span>
+            <span><strong>Noche</strong><small>Funcionamiento automático</small></span>
+            <span class="status-label">ROJO</span>
+          </div>
+          <p class="panel-note">El umbral LDR configurado en el sketch es 800.</p>
+        </div>
+      </section>
+
+      <section class="components section-wrap" id="componentes">
+        <div class="section-heading">
+          <p class="eyebrow">ELECTRÓNICA DEL PROTOTIPO</p>
+          <h2>Los elementos que validan la idea.</h2>
+          <p>Cada componente permite probar una parte del control orientable previsto para la futura cámara.</p>
+        </div>
+        <div class="component-grid">
+          <article class="component-card">
+            <span class="component-number">01</span>
+            <h3>Arduino Uno</h3>
+            <p>Ejecuta las reglas de control y envía las lecturas al programa de registro.</p>
+          </article>
+          <article class="component-card">
+            <span class="component-number">02</span>
+            <h3>LDR</h3>
+            <p>Lee la luz ambiente y sirve de criterio para cambiar entre los modos de prueba.</p>
+          </article>
+          <article class="component-card">
+            <span class="component-number">03</span>
+            <h3>Joystick</h3>
+            <p>Permite comprobar manualmente el ángulo del soporte mediante el servo.</p>
+          </article>
+          <article class="component-card">
+            <span class="component-number">04</span>
+            <h3>Motor servo</h3>
+            <p>Prueba el giro del soporte que podría sostener el módulo de cámara a futuro.</p>
+          </article>
+          <article class="component-card">
+            <span class="component-number">05</span>
+            <h3>LEDs rojo y verde</h3>
+            <p>Identifican visualmente el estado del montaje durante cada prueba.</p>
+          </article>
+          <article class="component-card">
+            <span class="component-number">06</span>
+            <h3>PB</h3>
+            <p>Protoboard donde se montan e interconectan todos los componentes del prototipo.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="database-section section-wrap" id="sqlite">
+        <div class="database-copy">
+          <p class="eyebrow">TELEMETRÍA DEL PROTOTIPO · SQLITE3</p>
+          <h2>Datos de prueba, no grabaciones.</h2>
+          <p>
+            Python añade a <code>kiwicam.db</code> cada lectura enviada por Arduino.
+            La base SQLite3 guarda luz, modo y ángulo del servo; no almacena imágenes ni video.
+          </p>
+          <ul class="data-fields">
+            <li><code>timestamp</code><span>Fecha y hora de lectura</span></li>
+            <li><code>ldr</code><span>Valor de luz procesado</span></li>
+            <li><code>mode</code><span><code>manual</code> o <code>auto</code></span></li>
+            <li><code>pos</code><span>Ángulo actual del servo</span></li>
+          </ul>
+          <p class="data-note">
+            Se registra una muestra cada 200 ms para evaluar la respuesta de los componentes
+            y revisar los cambios entre modos.
+          </p>
+          <p class="gallery-note">
+            Revisa otras evidencias: los registros iniciales y recientes de SQLite3 muestran
+            ambos modos; la segunda captura reúne el código y la salida del monitor serie.
+          </p>
+        </div>
+        <div class="database-visuals">
+          <figure class="database-figure">
+            <a href="assets/prueba-sqlite3.png" target="_blank" rel="noopener">
+              <img
+                class="database-image"
+                src="assets/prueba-sqlite3.png"
+                alt="Captura de la tabla telemetry de SQLite con las columnas id, timestamp, ldr, mode y pos"
+                loading="lazy"
+              >
+            </a>
+            <figcaption class="database-caption">PRUEBA DE REGISTROS EN SQLITE3 · KIWICAM.DB</figcaption>
+          </figure>
+          <details class="database-gallery">
+            <summary>Más imágenes de las pruebas</summary>
+            <div class="database-gallery-grid">
+              <figure class="database-gallery-item">
+                <a href="assets/registros-iniciales-y-recientes.png" target="_blank" rel="noopener">
+                  <img
+                    class="database-gallery-image"
+                    src="assets/registros-iniciales-y-recientes.png"
+                    alt="Primeros y últimos registros de telemetry en SQLite3, con modos manual y automático"
+                    loading="lazy"
+                    decoding="async"
+                  >
+                </a>
+                <figcaption class="database-caption">REGISTROS INICIALES Y RECIENTES · SQLITE3</figcaption>
+              </figure>
+              <figure class="database-gallery-item">
+                <a href="assets/arduino-monitor-serie.png" target="_blank" rel="noopener">
+                  <img
+                    class="database-gallery-image"
+                    src="assets/arduino-monitor-serie.png"
+                    alt="Código del prototipo Arduino y lecturas de los modos manual y automático en el monitor serie"
+                    loading="lazy"
+                    decoding="async"
+                  >
+                </a>
+                <figcaption class="database-caption">CÓDIGO Y SALIDA DEL MONITOR SERIE</figcaption>
+              </figure>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="technical-section section-wrap" id="codigo">
+        <details class="technical-disclosure">
+          <summary>
+            <span class="technical-kicker">CÓDIGO DEL PROTOTIPO · ARDUINO + PYTHON</span>
+            <strong>Consulta cómo está construido KiwiCam</strong>
+            <span>Componentes, lógica experimental y telemetría SQLite3</span>
+          </summary>
+          <div class="technical-content">
+        <div class="section-heading">
+          <p class="eyebrow">FICHA DEL PROTOTIPO</p>
+          <h2>Del sensor al registro.</h2>
+          <p>Arduino controla el montaje y Python registra sus lecturas en SQLite3; esta versión no captura imágenes.</p>
+        </div>
+
+        <div class="flow" aria-label="Flujo de telemetría del prototipo: LDR, Arduino, puerto serie, Python y SQLite3">
+          <span>LDR + joystick</span><b aria-hidden="true">→</b>
+          <span>Arduino Uno</span><b aria-hidden="true">→</b>
+          <span>Serial USB</span><b aria-hidden="true">→</b>
+          <span>Python + SQLite3</span>
+        </div>
+
+        <div class="code-explanations">
+          <article class="explanation-card">
+            <span class="component-number">ARDUINO · 01</span>
+            <h3>Preparación y pines</h3>
+            <p><code>setup()</code> inicia Serial a 9600 baudios, configura pines y conecta el servo al pin 9.</p>
+          </article>
+          <article class="explanation-card">
+            <span class="component-number">ARDUINO · 02</span>
+            <h3>Selección del modo</h3>
+            <p><code>loop()</code> invierte la lectura del LDR. Si queda bajo 800, activa <code>auto</code> y el LED rojo; si no, activa <code>manual</code> y el verde.</p>
+          </article>
+          <article class="explanation-card">
+            <span class="component-number">ARDUINO · 03</span>
+            <h3>Movimiento y telemetría</h3>
+            <p>En automático, el servo barre entre 0° y 180°. En manual, el joystick define el ángulo. Cada 200 ms se transmite <code>ldr,modo,pos</code>.</p>
+          </article>
+          <article class="explanation-card">
+            <span class="component-number">PYTHON · 01</span>
+            <h3>Base de datos y puerto</h3>
+            <p><code>sqlite3.connect()</code> abre o crea <code>kiwicam.db</code>; se prepara la tabla <code>telemetry</code> y se abre el puerto COM3 a 9600.</p>
+          </article>
+          <article class="explanation-card">
+            <span class="component-number">PYTHON · 02</span>
+            <h3>Lectura y validación</h3>
+            <p>El ciclo lee una línea, separa sus tres campos y convierte LDR y posición a enteros. Las líneas incompletas o valores inválidos se descartan.</p>
+          </article>
+          <article class="explanation-card">
+            <span class="component-number">PYTHON · 03</span>
+            <h3>Inserción y cierre</h3>
+            <p>Se agrega la fecha con una consulta parametrizada y se confirma con <code>commit()</code>. Al salir, el bloque <code>finally</code> cierra el serial y SQLite.</p>
+          </article>
+        </div>
+
+        <div class="function-reference">
+          <article class="function-panel">
+            <h3>Funciones de Arduino</h3>
+            <dl>
+              <div><dt><code>setup()</code></dt><dd>Se ejecuta una vez al iniciar: configura Serial, pines y conexión del servo.</dd></div>
+              <div><dt><code>loop()</code></dt><dd>Se repite continuamente para leer el LDR, seleccionar el modo y mover el servo.</dd></div>
+              <div><dt><code>analogRead()</code></dt><dd>Lee el LDR y el joystick como valores de 0 a 1023; la lectura del LDR se invierte con <code>1023 - valor</code>.</dd></div>
+              <div><dt><code>pinMode()</code> / <code>digitalWrite()</code></dt><dd>Configuran entradas y salidas y encienden o apagan los LEDs de estado.</dd></div>
+              <div><dt><code>map()</code> / <code>myservo.write()</code></dt><dd>Convierte la lectura del joystick en grados y ordena al servo alcanzar ese ángulo.</dd></div>
+              <div><dt><code>millis()</code> / <code>Serial.print()</code></dt><dd>Millis mide intervalos sin pausar el programa; Serial envía los tres datos separados por comas.</dd></div>
+              <div><dt><code>delay(15)</code></dt><dd>Espera 15 ms al final de cada vuelta del ciclo principal.</dd></div>
+            </dl>
+          </article>
+          <article class="function-panel">
+            <h3>Funciones de Python</h3>
+            <dl>
+              <div><dt><code>sqlite3.connect()</code> / <code>cursor.execute()</code></dt><dd>Abren la base y ejecutan la creación de la tabla o la inserción parametrizada.</dd></div>
+              <div><dt><code>serial.Serial()</code> / <code>time.sleep()</code></dt><dd>Abren COM3 a 9600 baudios y esperan dos segundos para que Arduino reinicie al conectar.</dd></div>
+              <div><dt><code>in_waiting</code> / <code>readline()</code></dt><dd>Comprueban que haya bytes disponibles y leen una línea serial completa.</dd></div>
+              <div><dt><code>decode()</code> / <code>strip()</code> / <code>split()</code></dt><dd>Convierten los bytes en texto, limpian el salto de línea y separan LDR, modo y posición.</dd></div>
+              <div><dt><code>len()</code> / <code>int()</code></dt><dd>Comprueban que haya tres campos y convierten las lecturas numéricas antes de guardarlas.</dd></div>
+              <div><dt><code>datetime.now()</code> / <code>strftime()</code></dt><dd>Obtienen la fecha y la formatean para guardarla como texto.</dd></div>
+              <div><dt><code>conn.commit()</code></dt><dd>Confirma cada fila para que el registro quede guardado en el archivo SQLite.</dd></div>
+              <div><dt><code>except</code> / <code>finally</code></dt><dd>Gestionan errores o salida y cierran el puerto serial y la conexión al terminar.</dd></div>
+            </dl>
+          </article>
+        </div>
+
+        <details class="source-disclosure">
+          <summary>Ver código completo de Arduino</summary>
+          <pre><code>#include &lt;Servo.h&gt;
+
+const int ldrpin = A1;
+const int joypin = A0;
+const int servopin = 9;
+const int redledpin = 7;
+const int greenledpin = 8;
+const int threshold = 800;
+
+Servo myservo;
+unsigned long lastsweep = 0;
+unsigned long lastsend = 0;
+int pos = 90;
+int dir = 1;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(ldrpin, INPUT_PULLUP);
+  pinMode(joypin, INPUT);
+  pinMode(redledpin, OUTPUT);
+  pinMode(greenledpin, OUTPUT);
+  myservo.attach(servopin);
+}
+
+void loop() {
+  int ldrval = 1023 - analogRead(ldrpin);
+  String mode = "";
+
+  if (ldrval &lt; threshold) {
+    mode = "auto";
+    digitalWrite(redledpin, HIGH);
+    digitalWrite(greenledpin, LOW);
+
+    if (millis() - lastsweep &gt; 30) {
+      pos += dir;
+      if (pos &lt;= 0 || pos &gt;= 180) {
+        dir = -dir;
+      }
+      myservo.write(pos);
+      lastsweep = millis();
+    }
+  } else {
+    mode = "manual";
+    digitalWrite(redledpin, LOW);
+    digitalWrite(greenledpin, HIGH);
+
+    int joyval = analogRead(joypin);
+    int servomanual = map(joyval, 0, 1023, 0, 180);
+    myservo.write(servomanual);
+    pos = servomanual;
+  }
+
+  if (millis() - lastsend &gt; 200) {
+    Serial.print(ldrval);
+    Serial.print(",");
+    Serial.print(mode);
+    Serial.print(",");
+    Serial.println(pos);
+    lastsend = millis();
+  }
+
+  delay(15);
+}</code></pre>
+        </details>
+
+        <details class="source-disclosure">
+          <summary>Ver código completo de Python + SQLite</summary>
+          <pre><code>from datetime import datetime
+import time
+import serial
+import sqlite3
+
+port = 'COM3'
+baud = 9600
+dbfile = 'kiwicam.db'
+
+conn = sqlite3.connect(dbfile)
+cursor = conn.cursor()
+cursor.execute('''
+    create table if not exists telemetry (
+        id integer primary key autoincrement,
+        timestamp text,
+        ldr integer,
+        mode text,
+        pos integer
+    )
+''')
+conn.commit()
+
+ser = None
+running = 1
+
+try:
+    ser = serial.Serial(port, baud, timeout=1)
+    time.sleep(2)
+    while running:
+        if ser.in_waiting &gt; 0:
+            line = ser.readline().decode('utf-8', errors='ignore').strip()
+            if not line:
+                continue
+            parts = line.split(',')
+            if len(parts) == 3:
+                try:
+                    ldr = int(parts[0])
+                    mode = parts[1].strip()
+                    pos = int(parts[2])
+                    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    cursor.execute(
+                        'insert into telemetry (timestamp, ldr, mode, pos) values (?, ?, ?, ?)',
+                        (timestamp, ldr, mode, pos)
+                    )
+                    conn.commit()
+                    print(f'{timestamp} - ldr: {ldr}, mode: {mode}, pos: {pos}')
+                except ValueError:
+                    continue
+except serial.SerialException as e:
+    print(f'serial error: {e}')
+except KeyboardInterrupt:
+    running = 0
+    print('exiting...')
+finally:
+    if ser and ser.is_open:
+        ser.close()
+    if conn:
+        conn.close()</code></pre>
+        </details>
+        <p class="threshold-note">
+          Nota: el sketch usa <code>1023 - analogRead(A1)</code> y luego compara con 800.
+          La relación entre lectura y día/noche depende del LDR y de cómo esté conectado;
+          calibra el umbral en el montaje real.
+        </p>
+          </div>
+        </details>
+      </section>
+
+      <section class="videos section-wrap" id="videos">
+        <div class="video-intro">
+          <p class="eyebrow">EXPLICACIÓN DEL PROTOTIPO</p>
+          <h2 class="video-title"><span>KiwiCam</span>, explicado en breve</h2>
+        </div>
+        <figure class="video-figure">
+          <video
+            class="video-player"
+            controls
+            playsinline
+            preload="metadata"
+            aria-label="Video explicativo del prototipo experimental KiwiCam con Arduino"
+          >
+            <source src="assets/demostracion.mp4" type="video/mp4">
+            Tu navegador no puede reproducir este video.
+          </video>
+        </figure>
+      </section>
+
+      <section class="videos section-wrap final-result" id="resultado-final">
+        <div class="video-intro">
+          <h2 class="video-title">Resultado final del prototipo</h2>
+        </div>
+        <figure class="video-figure">
+          <video
+            class="video-player"
+            controls
+            playsinline
+            preload="metadata"
+            aria-label="Video de la prueba final de funcionamiento del prototipo KiwiCam"
+          >
+            <source src="assets/resultado-final-prototipo.mp4" type="video/mp4">
+            Tu navegador no puede reproducir este video.
+          </video>
+        </figure>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <a class="brand footer-brand" href="#inicio">
+        <span class="brand-mark" aria-hidden="true">K</span>
+        <span>KIWICAM<span class="brand-subtitle">PROTOTIPO · ARDUINO</span></span>
+      </a>
+      <p class="copyright">Prototipo experimental, base de una futura cámara de seguridad. © 2026 KiwiCam, propiedad de Carolina Rodríguez y René Torres.</p>
+      <a class="back-to-top" href="#inicio">Volver arriba ↑</a>
+    </footer>
+    <script>
+      (() => {
+        const startupScreen = document.getElementById("startup-screen");
+        const startedAt = performance.now();
+        const minimumDuration = 1400;
+
+        const revealApp = async () => {
+          if (document.fonts && document.fonts.ready) {
+            await document.fonts.ready;
+          }
+
+          const remaining = minimumDuration - (performance.now() - startedAt);
+          if (remaining > 0) {
+            await new Promise((resolve) => window.setTimeout(resolve, remaining));
+          }
+
+          startupScreen.classList.add("is-leaving");
+          startupScreen.setAttribute("aria-hidden", "true");
+          window.setTimeout(() => {
+            startupScreen.remove();
+            document.body.classList.remove("is-starting");
+          }, 500);
+        };
+
+        if (document.readyState === "complete") {
+          revealApp();
+        } else {
+          window.addEventListener("load", revealApp, { once: true });
+        }
+      })();
+    </script>
+  </body>
+</html>
